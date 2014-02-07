@@ -166,9 +166,11 @@ public class PostsFragment extends Fragment{
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {			
 			if (loading) {
-				if (totalItemCount > previousTotal) {
+				//update previous total, adding in the footer 
+				if (totalItemCount > previousTotal + 1) {
 					loading = false;
-					previousTotal = totalItemCount;		
+					previousTotal = totalItemCount;	
+					Log.d("running", "item count: " + totalItemCount);
 				}
 			}			
 			if (!loading && 
@@ -198,7 +200,7 @@ public class PostsFragment extends Fragment{
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				Log.i("running", "start fetchMorePosts");
+				Log.i("running", "start fetchMorePosts");				
 				posts.addAll(postsHolder.fetchMorePosts());
 				Log.i("running", "end fetchMorePosts");
 				return null;
@@ -209,7 +211,7 @@ public class PostsFragment extends Fragment{
 				Log.i("running", "start adapterChange");
 				postsList.removeFooterView(footer);
 				notifyDataSetChanged();
-				Log.i("running", "start adapterChange");
+				Log.i("running", "end adapterChange");
 				super.onPostExecute(result);
 			}
 	    	
