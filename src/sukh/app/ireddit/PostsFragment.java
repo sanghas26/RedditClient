@@ -3,6 +3,8 @@ package sukh.app.ireddit;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,8 @@ import android.widget.TextView;
 public class PostsFragment extends Fragment{
          
     ListView postsList;
+    View footer;
+    Activity activity;
     PostAdapter adapter;
     Handler handler;
      
@@ -35,6 +39,7 @@ public class PostsFragment extends Fragment{
     public PostsFragment(){
         handler=new Handler();
         posts=new ArrayList<Post>();
+        activity = this.getActivity();
     }    
      
     public static Fragment newInstance(String subreddit){
@@ -52,6 +57,9 @@ public class PostsFragment extends Fragment{
                                 , container
                                 , false);
         postsList=(ListView)v.findViewById(R.id.posts_list);
+        
+        footer = inflater.inflate(R.layout.footer, postsList, false);
+        
         return v;
     }
      
@@ -106,9 +114,15 @@ public class PostsFragment extends Fragment{
         if(getActivity()==null) return;
         
         //Create our custom adapter and set it with our ListView + ScrollListener
-        adapter=new PostAdapter(posts);
+        adapter=new PostAdapter(posts);   
+        
+        //we must add our footer before setting adapter, or error occurs
+        postsList.addFooterView(footer);
         postsList.setAdapter(adapter);
         postsList.setOnScrollListener(adapter);
+        
+        //now we remove footer so it doesnt show right away
+        postsList.removeFooterView(footer);
         Log.d("running", "setting adapter");
         
     }
@@ -175,7 +189,13 @@ public class PostsFragment extends Fragment{
 	     * @author Sukh
 	     *
 	     */
-	    private class AddPostsTask extends AsyncTask<Void, Void, Void> {
+	    private class AddPostsTask extends AsyncTask<Void, Void, Void> { 	
+			@Override
+			protected void onPreExecute() {
+				postsList.addFooterView(footer);
+				super.onPreExecute();
+			}
+
 			@Override
 			protected Void doInBackground(Void... params) {
 				Log.i("running", "start fetchMorePosts");
@@ -187,6 +207,7 @@ public class PostsFragment extends Fragment{
 			@Override
 			protected void onPostExecute(Void result) {
 				Log.i("running", "start adapterChange");
+				postsList.removeFooterView(footer);
 				notifyDataSetChanged();
 				Log.i("running", "start adapterChange");
 				super.onPostExecute(result);
