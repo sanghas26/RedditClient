@@ -11,6 +11,7 @@ public class Post {
     String subreddit;
     String title;
     String author;
+    String selftext;
     int points;
     int numComments;
     String permalink;
@@ -32,5 +33,13 @@ public class Post {
      
     String getScore(){
         return Integer.toString(points);
+    }
+    
+    String getPermalink(){
+    	return permalink;
+    }
+    
+    String getSelftext(){
+    	return selftext;
     }
 }
