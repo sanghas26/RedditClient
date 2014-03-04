@@ -23,7 +23,7 @@ public class MainActivity extends FragmentActivity {
 	void addFragment() {
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
-		Fragment subredditFragment = PostsFragment.newInstance("bodybuilding", fm);
+		Fragment subredditFragment = PostsFragment.newInstance("cscareerquestions", fm);
 		ft.add(R.id.fragments_holder, subredditFragment).commit();
 	}
 }

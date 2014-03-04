@@ -32,7 +32,6 @@ public class PostsFragment extends Fragment {
 
 	ListView postsList;
 	View footer;
-	Activity activity;
 	PostAdapter adapter;
 	Handler handler;
 	static FragmentManager fm;
@@ -44,8 +43,6 @@ public class PostsFragment extends Fragment {
 	public PostsFragment() {
 		handler = new Handler();
 		posts = new ArrayList<Post>();
-		activity = this.getActivity();
-		//fm = this.getFragmentManager();
 	}
 
 	public static Fragment newInstance(String subreddit, FragmentManager _fm) {
@@ -91,7 +88,6 @@ public class PostsFragment extends Fragment {
 			new Thread() {
 				public void run() {
 					posts.addAll(postsHolder.fetchPosts());
-
 					// UI elements should be accessed only in
 					// the primary thread, so we must use the
 					// handler here.
@@ -240,8 +236,8 @@ public class PostsFragment extends Fragment {
 		
 		private void showClickedPost(Post _post) {			
 			FragmentTransaction ft = fm.beginTransaction();
-			Fragment pcf = PostContentsFragment.newInstance(_post);
-			ft.replace(R.id.fragments_holder, pcf);
+			Fragment cf = CommentsFragment.newInstance(_post);
+			ft.replace(R.id.fragments_holder, cf);
 			ft.addToBackStack(null);
 			ft.commit();
 		}

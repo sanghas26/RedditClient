@@ -1,7 +1,7 @@
 package sukh.app.ireddit;
  
 /**
- * This is a class that holds the data of the JSON objects
+ * This is a class that holds the post data of the JSON objects
  * returned by the Reddit API.
  * 
  * @author Sukhdip Sangha
@@ -12,12 +12,16 @@ public class Post {
     String title;
     String author;
     String selftext;
+    String selftexthtml;
+    String thumbnail;
     int points;
     int numComments;
     String permalink;
     String url;    
     String domain;
     String id;
+    String subredditid;
+    Boolean isSelf;
      
     String getDetails(){
         String details=author
@@ -31,6 +35,9 @@ public class Post {
         return title;
     }
      
+    String getSubreddit(){
+    	return subreddit;
+    }
     String getScore(){
         return Integer.toString(points);
     }

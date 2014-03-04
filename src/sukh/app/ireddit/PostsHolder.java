@@ -73,6 +73,10 @@ public class PostsHolder {
 				p.id = cur.optString("id");
 				p.selftext = cur.optString("selftext");
 				p.permalink = cur.optString("permalink");
+				p.isSelf = cur.optBoolean("is_self");
+				p.subredditid = cur.optString("subreddit_id");
+				p.selftexthtml = cur.optString("selftext_html");
+				p.thumbnail = cur.optString("thumbnail");
 				if (p.title != null)
 					list.add(p);
 			}
