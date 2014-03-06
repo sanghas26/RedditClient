@@ -2,7 +2,7 @@ package sukh.app.ireddit;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,69 +13,95 @@ public class CommentsHolder {
 	/**
 	 * We will be fetching JSON data from the API.
 	 */
-	private final String URL_TEMPLATE = "http://www.reddit.com/r/SUBREDDIT_NAME/"
-			+ "TOPIC_NAME/" + ".json";
+	// private final String URL_TEMPLATE =
+	// "http://www.reddit.com/r/SUBREDDIT_NAME/"
+	// + "TOPIC_NAME/" + ".json";
 
 	Post parentPost;
+	List<Comment> comments;
 	String url;
 	String after;
+	String raw;
 
-	CommentsHolder(Post _post) {
-		parentPost = _post;
+	CommentsHolder(Post post) {
+		parentPost = post;
 		after = "";
 		generateURL();
 	}
 
 	/**
-	 * Generates the actual URL from the template based on the subreddit name
-	 * and the 'after' property.
+	 * Generates the actual URL from the template based on the post permalink
 	 */
 	private void generateURL() {
-		url = "http://www.reddit.com" + parentPost.getPermalink() + ".json";		
+		url = "http://www.reddit.com" + parentPost.getPermalink() + ".json";
 	}
 
 	/**
-	 * Returns a list of Post objects after fetching data from Reddit using the
-	 * JSON API.
+	 * Return list of comments in JSON format
 	 * 
 	 * @return
 	 */
-	List<Comment> fetchComments() {
-		String raw = RemoteData.readContents(url);
-		List<Comment> list = new ArrayList<Comment>();
+	List<Comment> startFetch() {
+		raw = RemoteData.readContents(url);
+		JSONArray jsonComments = new JSONArray();
+
 		try {
 			JSONObject obj = new JSONArray(raw).getJSONObject(1);
-			JSONArray children = obj.getJSONObject("data").getJSONArray("children");
-			Log.d("running", "JSONArray size: " + children.length());
-			for (int i = 0; i < children.length(); i++) {
-				JSONObject cur = children.getJSONObject(i)
-						.getJSONObject("data");
-				Comment c = new Comment();
-				if (cur.optJSONObject("replies") != null) {
-					//TODO: ADD ALL REPLIES TO LIST
-					Log.d("running", "This comment has more replies...");
-				}
-				c.author = cur.optString("author");
-				c.body = cur.optString("body");
-				c.ups = cur.optInt("ups");
-				c.subreddit = cur.optString("subreddit");
-				c.id = cur.optString("id");
-				//if (c.body != null)
-					list.add(c);
-			}
+			jsonComments = obj.getJSONObject("data").getJSONArray("children");
 		} catch (Exception e) {
 			Log.e("fetchComments()", e.toString());
 		}
-		return list;
+
+		return fetchComments(jsonComments);
 	}
 
 	/**
-	 * This is to fetch the next set of posts using the 'after' property
+	 * Returns a list of Comment objects after fetching data from Reddit using
+	 * the JSON API.
 	 * 
 	 * @return
 	 */
-	List<Comment> fetchMoreComments() {
-		generateURL();
-		return fetchComments();
+	private List<Comment> fetchComments(JSONArray comments) {
+		List<Comment> commentList = new ArrayList<Comment>();
+		try {
+			for (int i = 0; i < comments.length(); i++) {
+				JSONObject cur = comments.getJSONObject(i)
+						.getJSONObject("data");
+				Comment c = createComment(cur);
+				Log.d("running", c.author + " commented with " + c.body);
+				if (!cur.optString("replies").equalsIgnoreCase("")) {
+					Log.d("running", "this comment has replies...");
+					JSONArray jsonReplies = cur.getJSONObject("replies")
+							.getJSONObject("data").getJSONArray("children");
+					Log.d("running", "Reply in JSON: " + jsonReplies.toString());
+
+					List<Comment> replyComments = fetchComments(jsonReplies);
+					Log.d("running",
+							"Total replies json: " + jsonReplies.length()
+									+ " replies");
+					Log.d("running",
+							"Total replies list: " + replyComments.size()
+									+ " replies");
+					c.replies = replyComments;
+				}
+				if (c.body != null)
+					commentList.add(c);
+			}
+		} catch (Exception e) {
+			Log.e("running", e.toString());
+		}
+		return commentList;
 	}
+
+	private Comment createComment(JSONObject cur) {
+		Comment c = new Comment();
+
+		c.author = cur.optString("author");
+		c.body = StringEscapeUtils.unescapeHtml4(cur.optString("body"));
+		c.ups = cur.optInt("ups");
+		c.subreddit = cur.optString("subreddit");
+		c.id = cur.optString("id");
+
+		return c;
+	}	
 }

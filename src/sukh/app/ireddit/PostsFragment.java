@@ -3,7 +3,6 @@ package sukh.app.ireddit;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;

@@ -22,8 +22,8 @@ public class Comment {
 	String link_id;
 	String name;	
 
-	List<Comment> repliesList;
-	JSONObject replies;
+	List<Comment> replies;
+	JSONObject jsonReplies;
 	
 	int ups;
 	int downs;
@@ -40,11 +40,22 @@ public class Comment {
 	public void setSubreddit_id(String subreddit_id) {
 		this.subreddit_id = subreddit_id;
 	}
-	public JSONObject getReplies() {
+	public List<Comment> getReplies() {
 		return replies;
 	}
-	public void setReplies(JSONObject replies) {
-		this.replies = replies;
+	public void addReplies(List<Comment> replies) {
+		this.replies.addAll(replies);
+	}
+	public JSONObject getJsonReplies() {
+		return jsonReplies;
+	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getBody();
+	}
+	public void setJsonReplies(JSONObject jsonReplies) {
+		this.jsonReplies = jsonReplies;
 	}
 	public String getId() {
 		return id;

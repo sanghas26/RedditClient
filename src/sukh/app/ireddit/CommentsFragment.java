@@ -3,11 +3,9 @@ package sukh.app.ireddit;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,8 +67,11 @@ public class CommentsFragment extends Fragment {
 	private void initialize() {		
 		if (comments.size() == 0) {
 			new Thread() {
-				public void run() {					
-					comments.addAll(commentsHolder.fetchComments());
+				public void run() {	
+					List<Comment> parentComment = commentsHolder.startFetch();
+					for (Comment c : parentComment) {
+						addComment(c);						
+					}
 					Log.d("running", "comments list size: " + comments.size() + " comments");
 					handler.post(new Runnable() {
 						public void run() {
@@ -81,6 +82,15 @@ public class CommentsFragment extends Fragment {
 			}.start();
 		} else {
 			createAdapter();
+		}
+	}
+	
+	private void addComment(Comment comment) {
+		comments.add(comment);
+		if (comment.replies != null) {
+			for (Comment c : comment.replies) {
+				addComment(c);
+			}
 		}
 	}
 

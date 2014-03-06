@@ -3,6 +3,7 @@ package sukh.app.ireddit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -62,7 +63,7 @@ public class PostsHolder {
 				JSONObject cur = children.getJSONObject(i)
 						.getJSONObject("data");
 				Post p = new Post();
-				p.title = cur.optString("title");
+				p.title = StringEscapeUtils.unescapeHtml4(cur.optString("title"));
 				p.url = cur.optString("url");
 				p.numComments = cur.optInt("num_comments");
 				p.points = cur.optInt("score");
