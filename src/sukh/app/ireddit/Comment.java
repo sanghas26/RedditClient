@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * @author Sukhdip Sangha
  */
 
-public class Comment {
+public class Comment {	
 	String subreddit;
 	String subreddit_id;
 	String id;
@@ -25,8 +25,10 @@ public class Comment {
 	List<Comment> replies;
 	JSONObject jsonReplies;
 	
+	boolean moreComment = false;
 	int ups;
 	int downs;
+	int replyNumber;
 	
 	public String getSubreddit() {
 		return subreddit;
@@ -111,6 +113,5 @@ public class Comment {
 	public void setDowns(int downs) {
 		this.downs = downs;
 	}
-	
 	
 }

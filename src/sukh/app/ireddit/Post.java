@@ -34,6 +34,10 @@ public class Post {
     String getTitle(){
         return title;
     }
+    
+    boolean hasSelfText() {
+    	return selftext.length() > 0;
+    }
      
     String getSubreddit(){
     	return subreddit;

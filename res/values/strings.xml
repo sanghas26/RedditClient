@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">iReddit</string>
     <string name="action_settings">Settings</string>
-    <string name="subreddit">indianbabes</string>
+    <string name="subreddit">funny</string>
     <string name="fragment_post_list_title">Sukh\'s Reddit</string>
     <string name="loading">Loading...</string>
 </resources>
